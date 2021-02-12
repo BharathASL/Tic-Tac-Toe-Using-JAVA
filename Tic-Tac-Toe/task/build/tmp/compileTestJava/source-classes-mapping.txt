@@ -1,4 +1,5 @@
 TicTacToeTest.java
+ Clue
  FieldState
  TicTacToeField
  TicTacToeTest

@@ -1,2 +1,5 @@
 tictactoe/Main.java
  tictactoe.Main
+ tictactoe.Main$1
+ tictactoe.Main$Direction
+ tictactoe.Main$GameResult

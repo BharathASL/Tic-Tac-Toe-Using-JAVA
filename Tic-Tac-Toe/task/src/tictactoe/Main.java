@@ -1,36 +1,70 @@
 package tictactoe;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        System.out.print("Enter cells: ");
-        final char[] board;
+        final char[] board = new char[9];
+        Arrays.fill(board, '_');
         try (Scanner in = new Scanner(System.in)) {
-            String line = in.nextLine();
-            if (line.length() < 9) {
-                return;
-            }
-            board = line.toCharArray();
+            boolean xRole = true;
+            Main.printBoard(board);
+            do {
+                int targetIndex, x, y;
+                do {
+                    System.out.print("Enter the coordinates: ");
+                    String[] words = in.nextLine().split(" ");
+                    if (words.length != 2) {
+                        System.out.println("You should enter numbers!");
+                        continue;
+                    }
+                    try {
+                        x = (Integer.parseInt(words[0]) - 1);
+                        y = Integer.parseInt(words[1]) - 1;
+                        if (x > 2 || y > 2 || x < 0 || y < 0) {
+                            System.out.println("Coordinates should be from 1 to 3!");
+                            continue;
+                        }
+                        if (board[targetIndex = x * 3 + y] != '_') {
+                            System.out.println("This cell is occupied! Choose another one!");
+                            continue;
+                        }
+                        break;
+                    } catch (NumberFormatException e) {
+                        System.out.println("You should enter numbers!");
+                    }
+                } while (true);
+                board[targetIndex] = xRole ? 'X' : 'O';
+                Main.printBoard(board);
+                final GameResult gameResult = Main.analyseResult(board);
+                if (gameResult == GameResult.DRAW || gameResult == GameResult.O || gameResult == GameResult.X) {
+                    System.out.println(gameResult);
+                    return;
+                }
+                xRole = !xRole;
+            } while (true);
         }
+
+    }
+
+    private static void printBoard(char[] board) {
         System.out.println("---------");
-        int x = 0, o = 0;
         for (int i = 0; i < board.length; ++i) {
             if (i % 3 == 0) System.out.print("| ");
-            System.out.print(board[i] + " ");
+            System.out.print((board[i] == '_' ? " " : board[i]) + " ");
             if (i % 3 == 2) System.out.println("|");
-            if (board[i] == 'X') ++x;
-            if (board[i] == 'O') ++o;
         }
         System.out.println("---------");
-        if (x - o > 1 || x - o < -1) {
-            System.out.println("Impossible");
-            return;
-        }
-        System.out.println(Main.analyseResult(board));
     }
 
     private static GameResult analyseResult(char[] board) throws Exception {
+        int x = 0, o = 0;
+        for (char c : board) {
+            if (c == 'X') ++x;
+            if (c == 'O') ++o;
+        }
+        if (x - o > 1 || x - o < -1) return GameResult.IMPOSSIBLE;
         char[] scanResult = new char[8];
         scanResult[0] = Main.scanDirection(board, 0, Direction.RIGHT);
         scanResult[1] = Main.scanDirection(board, 0, Direction.BOTTOM);
